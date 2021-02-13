@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { TextField, Button, Typography, Paper } from '@material-ui/core';
 import FileBase from 'react-file-base64';
-import {useDispatch} from 'react-redux';
-import {createPost} from '../../actions/posts'
 
+import { useDispatch, useSelector } from 'react-redux';
+import { createPost, updatePost } from '../../actions/posts';
 import useStyles from './styles';
-export const Form = () => {
+export const Form = ({ currentId, setCurrentId }) => {
+	const post = useSelector((state) => (currentId ? state.posts.find((p) => p._id === currentId) : null));
 	const [postData, setPostData] = useState({
 		creator: '',
 		title: '',
@@ -17,15 +18,36 @@ export const Form = () => {
 	const classes = useStyles();
 	const dispatch = useDispatch();
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		dispatch(createPost(postData));
+	useEffect(() => {
+		if (post) setPostData(post);
+	}, [post]);
+	//console.log(postData)
+	const clear = () => {
+		setCurrentId(0);
+
+		setPostData({
+			creator: '',
+			title: '',
+			message: '',
+			tags: '',
+			selectedFile: '',
+		});
 	};
-	const clear = () => {};
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		//console.log(postData);
+		if (currentId) {
+			await dispatch(updatePost(currentId, postData));
+		} else {
+			await dispatch(createPost(postData));
+		}
+		clear();
+	};
+
 	return (
 		<Paper className={classes.paper}>
 			<form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
-				<Typography variant="h6">Creando un recuerdo</Typography>
+				<Typography variant="h6">{currentId ? 'Editando ' : 'Creando'} un recuerdo</Typography>
 				<TextField
 					name="creator"
 					variant="outlined"
@@ -56,7 +78,7 @@ export const Form = () => {
 					label="Etiquetas"
 					fullWidth
 					value={postData.tags}
-					onChange={(e) => setPostData({ ...postData, tags: e.target.value })}
+					onChange={(e) => setPostData({ ...postData, tags: e.target.value.split(',') })}
 				/>
 				<div className={classes.fileInput}>
 					<FileBase
@@ -72,6 +94,7 @@ export const Form = () => {
 					size="large"
 					type="submit"
 					fullWidth
+					onClick={handleSubmit}
 				>
 					Crear
 				</Button>
