@@ -9,12 +9,12 @@ import useStyles from './styles';
 export const Form = ({ currentId, setCurrentId }) => {
 	const post = useSelector((state) => (currentId ? state.posts.find((p) => p._id === currentId) : null));
 	const [postData, setPostData] = useState({
-		creator: '',
 		title: '',
 		message: '',
 		tags: '',
 		selectedFile: '',
 	});
+	const user = JSON.parse(localStorage.getItem('profile'))
 	const classes = useStyles();
 	const dispatch = useDispatch();
 
@@ -26,7 +26,6 @@ export const Form = ({ currentId, setCurrentId }) => {
 		setCurrentId(0);
 
 		setPostData({
-			creator: '',
 			title: '',
 			message: '',
 			tags: '',
@@ -37,25 +36,27 @@ export const Form = ({ currentId, setCurrentId }) => {
 		e.preventDefault();
 		//console.log(postData);
 		if (currentId) {
-			await dispatch(updatePost(currentId, postData));
+			await dispatch(updatePost(currentId, {...postData,name:user?.result?.name}));
 		} else {
-			await dispatch(createPost(postData));
+			await dispatch(createPost({...postData,name:user?.result?.name}));
 		}
 		clear();
 	};
+	if(!user?.result?.name){
+		return (
+			<Paper className={classes.paper} >
+				<Typography variant="h6" align="center" >
+					Please Sign In to create your own memories and like other's memories
+				</Typography>
+			</Paper>
+		)
+	}
 
 	return (
 		<Paper className={classes.paper}>
 			<form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
 				<Typography variant="h6">{currentId ? 'Editando ' : 'Creando'} un recuerdo</Typography>
-				<TextField
-					name="creator"
-					variant="outlined"
-					label="Creador"
-					fullWidth
-					value={postData.creator}
-					onChange={(e) => setPostData({ ...postData, creator: e.target.value })}
-				/>
+				
 				<TextField
 					name="title"
 					variant="outlined"
