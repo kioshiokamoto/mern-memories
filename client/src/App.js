@@ -1,26 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { Container, AppBar, Typography, Grow, Grid } from '@material-ui/core';
-import memories from './images/memories.png';
-import { useDispatch } from 'react-redux';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-
-import { getPosts } from './actions/posts';
-import { Posts } from './components/Posts/Posts';
-import { Form } from './components/Form/Form';
-import useStyles from './styles';
-import Navbar from './components/Navbar/Navbar';
-import Home from './components/Home/Home';
+import { Container } from '@material-ui/core';
+import React from 'react';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import Auth from './components/Auth/Auth';
+import Home from './components/Home/Home';
+import Navbar from './components/Navbar/Navbar';
+import PostDetails from './components/PostDetails/PostDetails';
+
 const App = () => {
+	const user = JSON.parse(localStorage.getItem('profile'));
 	return (
 		<Router>
-			<Container maxWidth="lg">
+			<Container maxWidth="xl">
 				<Navbar />
 				<Switch>
-					<Route path='/' exact component={Home} />
-					<Route path='/auth' exact component={Auth} />
+					<Route path="/" exact component={() => <Redirect to="/posts" />} />
+					<Route path="/posts" exact component={Home} />
+					<Route path="/posts/search" exact component={Home} />
+					<Route path="/posts/:id" exact component={PostDetails} />
+					<Route path="/auth" exact component={() => (!user ? <Auth /> : <Redirect to="/posts" />)} />
 				</Switch>
-				
 			</Container>
 		</Router>
 	);
