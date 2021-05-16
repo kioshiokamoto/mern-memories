@@ -14,7 +14,7 @@ export const Form = ({ currentId, setCurrentId }) => {
 		tags: '',
 		selectedFile: '',
 	});
-	const user = JSON.parse(localStorage.getItem('profile'))
+	const user = JSON.parse(localStorage.getItem('profile'));
 	const classes = useStyles();
 	const dispatch = useDispatch();
 
