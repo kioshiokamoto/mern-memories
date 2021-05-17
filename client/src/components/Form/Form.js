@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { TextField, Button, Typography, Paper } from '@material-ui/core';
 import FileBase from 'react-file-base64';
-
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPost, updatePost } from '../../actions/posts';
 import useStyles from './styles';
@@ -17,6 +17,7 @@ export const Form = ({ currentId, setCurrentId }) => {
 	const user = JSON.parse(localStorage.getItem('profile'));
 	const classes = useStyles();
 	const dispatch = useDispatch();
+	const history = useHistory();
 
 	useEffect(() => {
 		if (post) setPostData(post);
@@ -35,10 +36,10 @@ export const Form = ({ currentId, setCurrentId }) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		//console.log(postData);
-		if (currentId) {
-			await dispatch(updatePost(currentId, { ...postData, name: user?.result?.name }));
+		if (currentId === 0) {
+			await dispatch(createPost({ ...postData, name: user?.result?.name }, history));
 		} else {
-			await dispatch(createPost({ ...postData, name: user?.result?.name }));
+			await dispatch(updatePost(currentId, { ...postData, name: user?.result?.name }));
 		}
 		clear();
 	};
