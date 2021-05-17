@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createPost, updatePost } from '../../actions/posts';
 import useStyles from './styles';
 export const Form = ({ currentId, setCurrentId }) => {
-	const post = useSelector((state) => (currentId ? state.posts.find((p) => p._id === currentId) : null));
+	const post = useSelector((state) => (currentId ? state.posts.posts.find((p) => p._id === currentId) : null));
 	const [postData, setPostData] = useState({
 		title: '',
 		message: '',

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { useSelector } from 'react-redux';
 import { Grid, CircularProgress } from '@material-ui/core';
@@ -10,7 +10,6 @@ export const Posts = ({ setCurrentId }) => {
 
 	if (!posts.length && !isLoading) return 'No posts';
 
-	//console.log(posts);
 	return isLoading ? (
 		<CircularProgress />
 	) : (
